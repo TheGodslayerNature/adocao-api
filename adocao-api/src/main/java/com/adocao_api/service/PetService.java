@@ -18,7 +18,12 @@ public class PetService {
     }
 
     public PetModel salvarPet(PetModel pet){
-        return repository.save(pet);
+
+        if (pet.getId() == null)
+                return repository.save(pet);
+        else {
+            throw new RuntimeException("Esse Pet já existe");
+        }
     }
 
     public List<PetModel> listarPets(){
