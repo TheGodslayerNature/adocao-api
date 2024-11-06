@@ -6,8 +6,8 @@ RUN apt-get install openjdk-21-jdk -y
 COPY . .
 
 RUN apt-get update
-RUN apt install maven -y
-RUN mvn package
+RUN apt-get install maven -y
+RUN apt mvn package
 
 FROM openjdk:21
 # Expõe a porta do seu projeto
