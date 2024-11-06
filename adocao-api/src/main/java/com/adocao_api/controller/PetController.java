@@ -30,11 +30,7 @@ public class PetController {
 
     @PostMapping
     public ResponseEntity salvarPet(@RequestBody PetRequestDto petRequest){
-        PetModel pet = new PetModel(petRequest);
-        service.salvarPet(pet);
-        PetResponseDto response = new PetResponseDto(pet);
-
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().body(service.salvarPet(petRequest));
     }
 
     @GetMapping("/{id}")
@@ -51,7 +47,7 @@ public class PetController {
         PetModel pet = service.atualizarPet(id, request);
         PetResponseDto response = new PetResponseDto(pet);
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().build();
     }
 
 
@@ -59,7 +55,6 @@ public class PetController {
     @Transactional
     public ResponseEntity deletarPet(@PathVariable(value = "id") String id) {
         service.deletarPet(id);
-
         return ResponseEntity.ok().build();
     }
 }

@@ -1,29 +1,26 @@
 package com.adocao_api.service;
 
 import com.adocao_api.dto.PetRequestDto;
+import com.adocao_api.exception.PetNotFoundException;
+import com.adocao_api.mapper.PetMapper;
 import com.adocao_api.model.PetModel;
 import com.adocao_api.repository.PetRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PetService {
 
     private final PetRepository repository;
-
-    public PetService(PetRepository repository) {
+    private final PetMapper mapper;
+    public PetService(PetRepository repository, PetMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
-    public PetModel salvarPet(PetModel pet){
-
-        if (pet.getId() == null)
-                return repository.save(pet);
-        else {
-            throw new RuntimeException("Esse Pet já existe");
-        }
+    public PetModel salvarPet(PetRequestDto pet){
+        return repository.save(mapper.toPet(pet));
     }
 
     public List<PetModel> listarPets(){
@@ -31,27 +28,16 @@ public class PetService {
     }
 
     public PetModel getPet(String id){
-        if (repository.findById(id).isPresent())
-            return repository.findById(id).get();
-        throw new RuntimeException("Pet não encontrado");
+        return repository.findById(id).orElseThrow(() -> new PetNotFoundException("Pet não encontrado"));
     }
 
     public PetModel atualizarPet(String id, PetRequestDto request){
-        if (repository.findById(id).isPresent()){
-            PetModel petModel = new PetModel(id, request.nome(), request.raca(), request.imagem());
-            return repository.save(petModel);
-        }
-        throw new RuntimeException("Pet não encontrado");
+        getPet(id);
+        PetModel petModel = mapper.toPet(id,request);
+        return repository.save(petModel);
     }
 
     public void deletarPet(String id) {
-        Optional<PetModel> pet = repository.findById(id);
-
-        if (pet.isPresent()) {
-            repository.delete(pet.get());
-        }
-        else {
-            throw new RuntimeException("Pet não encontrado");
-        }
+        repository.delete(getPet(id));
     }
 }
