@@ -1,7 +1,6 @@
 FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean install
+COPY . .
+RUN mvn package pom.xml
 
 FROM eclipse-temurin:21-alpine
 COPY --from=build target/adocao-api-0.0.1-SNAPSHOT.jar app.jar
