@@ -1,5 +1,4 @@
 FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
-COPY . .
 RUN mvn package pom.xml
 
 FROM eclipse-temurin:21-alpine
